@@ -22,10 +22,10 @@ class AIRouter {
     this.router = Router();
     this.routes = {
       post: [
-        { path: '/status',         method: 'postStatus' },
-        { path: '/games/start',    method: 'startGame'  },
-        { path: '/games/play/:id', method: 'play'       },
-        { path: '/games/end/:id',  method: 'endGame'    }
+        { path: '/status',              method: 'postStatus' },
+        { path: '/games/start',         method: 'startGame'  },
+        { path: '/games/play/:game_id', method: 'play'       },
+        { path: '/games/end/:game_id',  method: 'endGame'    }
       ]
     };
 
@@ -50,7 +50,17 @@ class AIRouter {
    * we are busy.
    */
   startGame(req, res, next) {
-    return res.sendStatus(500);
+    let token      = req.body.token;
+    let difficulty = req.body.difficulty;
+    let player     = req.body.player;
+
+    log(`Received play request [${token}, ${difficulty}, ${player}]`);
+    
+    let response = aiService.startGame(token, difficulty, player);
+    if (!response) {
+      return res.sendStatus(401);
+    }
+    return res.send(response);
   }
 
   /**
@@ -59,16 +69,33 @@ class AIRouter {
    * platform.
    */
   play(req, res, next) {
-    log(`Play id: ${req.params.id}`);
-    return res.sendStatus(500);    
+    const gameID     = req.params.game_id;
+    const token      = req.body.token;
+    const difficulty = req.body.difficulty;
+    const player     = req.body.player;
+    const board      = req.body.board;
+
+    const response = aiService.play(gameID, token, difficulty, player, board);
+    if (!response) {
+      return res.sendStatus(401);
+    }
+    return res.send(response);
   }
 
   /**
-   * Used to tell that we are now availabe for a new game.
+   * Used to tell that the game is over and tell the winner.
    */
   endGame(req, res, next) {
-    log(`EndGame id: ${req.params.id}`);
-    return res.sendStatus(500);
+    const gameID = req.params.game_id;
+    const token  = req.body.token;
+    const winner = req.body.winner;
+    const code   = req.body.code;
+
+    const response = aiService.endGame(gameID, token, winner, code);
+    if (!response) {
+      return res.sendStatus(401);
+    }
+    return res.send(response);
   }
 
   /**
