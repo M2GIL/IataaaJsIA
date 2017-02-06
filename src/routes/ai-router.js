@@ -69,13 +69,20 @@ class AIRouter {
    * platform.
    */
   play(req, res, next) {
-    const gameID     = req.params.game_id;
-    const token      = req.body.token;
+    const gameID = req.params.game_id;
+    const token = req.body.token;
     const difficulty = req.body.difficulty;
-    const player     = req.body.player;
-    const board      = req.body.board;
+    const player = req.body.player;
+    const board = req.body.board;
 
-    const response = aiService.play(gameID, token, difficulty, player, board);
+    const response = aiService.play(
+      gameID,
+      token,
+      difficulty,
+      player,
+      board
+    );
+
     if (!response) {
       return res.sendStatus(401);
     }
@@ -87,9 +94,9 @@ class AIRouter {
    */
   endGame(req, res, next) {
     const gameID = req.params.game_id;
-    const token  = req.body.token;
+    const token = req.body.token;
     const winner = req.body.winner;
-    const code   = req.body.code;
+    const code = req.body.code;
 
     const response = aiService.endGame(gameID, token, winner, code);
     if (!response) {

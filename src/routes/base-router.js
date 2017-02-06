@@ -7,7 +7,10 @@ class BaseRouter {
     this._init();
   }
 
-  /* Main access point */
+  /**
+   * You can use this endpoint to test
+   * your methods.
+   */
   getAll(req, res, next) {
     res.send({ message: 'Hello from BaseRouter' });
   }
@@ -15,7 +18,6 @@ class BaseRouter {
   _init() {
     this.router.get('/', this.getAll);
   }
-  
 }
 
 const baseRoutes = new BaseRouter();

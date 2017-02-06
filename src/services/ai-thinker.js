@@ -1,13 +1,16 @@
 const log = require('debug')('iataaa:ai-thinker');
 
 const Case = require('../models/case');
-const CodeEndGame   = require('../models/code-end-game');
-const GameLevel     = require('../models/game-level');
+const CodeEndGame = require('../models/code-end-game');
+const GameLevel = require('../models/game-level');
+
+const AIOwn = require('./ai-own');
 
 class AIThinker {
 
   constructor(id) {
     this.id = id;
+    this.ai = null;
     log(`AIThinker created [${this.id}]`);
   }
 
@@ -18,6 +21,10 @@ class AIThinker {
    */
   startGame(difficulty, player) {
     log(`New game started with player ${player} and level ${difficulty} on [${this.id}]`);
+    if (player === 2) {
+      player = 3;
+    }
+    this.ai = new AIOwn(player, 0, false);
   }
 
   /**
@@ -31,21 +38,11 @@ class AIThinker {
   play(difficulty, player, board) {
     log(`New move by player ${player} and level ${difficulty} on [${this.id}]`);
 
-    const tab = [
-      [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
-      [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
-      [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
-      [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
-      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-      [ 0, 3, 0, 3, 0, 3, 0, 3, 0, 3 ],
-      [ 3, 0, 3, 0, 3, 0, 3, 0, 3, 0 ],
-      [ 0, 3, 0, 3, 0, 3, 0, 3, 0, 3 ],
-      [ 3, 0, 3, 0, 3, 0, 3, 0, 3, 0 ],
-    ];
+    this.ai.setBoard(Case.toNumberBoard(board));
+    this.ai.buildGraph();
 
-    return Case.toCaseBoard(tab);
-
+    let newBoard = this.ai.takeAdecision();
+    return Case.numberToCaseBoard(newBoard);
   }
 
   /**
@@ -53,8 +50,8 @@ class AIThinker {
    */
   endGame(winner, code) {
     log(`Game ended (${code}) ! Winner is ${winner} on [${this.id}]`);
+    this.ai = null;
   }
-
 }
 
 module.exports = AIThinker;

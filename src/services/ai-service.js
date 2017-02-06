@@ -102,10 +102,10 @@ class AIService {
     let movements = thinker.play(difficulty, player, caseBoard);
     
     return { 
-      token:      token,
+      token: token,
       difficulty: difficulty,
-      player:     player,
-      board:      Case.toCharBoard(movements)
+      player: player,
+      board: Case.toCharBoard(movements)
     };
   }
 
