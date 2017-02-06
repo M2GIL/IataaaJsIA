@@ -3,7 +3,7 @@ const debug = require('debug')('iataaa');
 
 const App = require('./app');
 
-const port = normalizePort(process.env.PORT || 3000);
+const port = normalizePort(process.env.PORT || 9998);
 App.set('port', port);
 
 const server = http.createServer(App);
